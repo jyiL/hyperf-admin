@@ -25,10 +25,10 @@ class ConfigProvider
             'publish' => [],
             'middlewares' => [
                 'http' => [
-                    CorsMiddleware::class,
+//                    CorsMiddleware::class,
                     AuthMiddleware::class,
                     PermissionMiddleware::class,
-                    HttpLogMiddleware::class
+//                    HttpLogMiddleware::class
                 ]
             ]
         ]);

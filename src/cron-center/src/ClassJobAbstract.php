@@ -18,7 +18,7 @@ abstract class ClassJobAbstract
         $this->job = $crontab;
         $this->jobManager = make(CronManager::class);
         $this->state = $this->jobManager->getJobState($crontab->getId());
-        $this->logger = logger();
+        $this->logger = logger()->get('cron_center');
     }
 
     public function run($params = [])

@@ -100,18 +100,23 @@ class Guzzle
             $domain = isset($parse['port']) ? $parse['host'] . ':' . $parse['port'] : $parse['host'];
             $options['cookies'] =  CookieJar::fromArray(cookie(), $domain);
 
-            if ($query = $request->getQueryParams()) {
+            $method = $request->getMethod();
+            if ($method == 'GET' && $query = $request->getQueryParams()) {
                 $options['query'] = $query;
             }
-            if ($body =  (array)json_decode($request->getBody()->getContents(), true)) {
-                $options['body'] = \GuzzleHttp\json_encode($body);
-            }
-            if ($form_data = $request->getParsedBody()) {
-                $options['form_params'] = $form_data;
+
+            if($method == 'POST') {
+                $options['headers']['Content-Type'] = $headers['Content-Type'] ?? 'application/json';
+                if ($options['headers']['Content-Type'] == 'application/json' && $body =  (array)json_decode($request->getBody()->getContents(), true)) {
+                    $options['body'] = \GuzzleHttp\json_encode($body);
+                }
+                if ($options['headers']['Content-Type'] == 'application/x-www-form-urlencoded' && $form_data = $request->getParsedBody()) {
+                    $options['form_params'] = $form_data;
+                }
             }
 
-            $request = retry(3, function () use ($client, $request, $url, $options) {
-                return $client->request($request->getMethod(), $url, $options);
+            $request = retry(3, function () use ($client, $method, $url, $options) {
+                return $client->request($method, $url, $options);
             }, 50);
             $content = $request->getBody()->getContents();
             $logger->info('proxy_success', compact('url', 'options'));

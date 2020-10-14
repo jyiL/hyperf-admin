@@ -37,10 +37,10 @@
         "hyperf/validation": "~2.0.0",
         "nette/php-generator": "^3.4",
         "yadakhov/insert-on-duplicate-key": "^1.2",
-        "zoujingli/ip2region": "^1.0",
-	"jyil/base-utils": "1.0.0"
+        "zoujingli/ip2region": "^1.0"
     },
     "replace": {
+        "jyil/base-utils": "self.version",
         "hyperf-admin/admin": "self.version",
         "hyperf-admin/alert-manager": "self.version",
         "hyperf-admin/cron-center": "self.version",

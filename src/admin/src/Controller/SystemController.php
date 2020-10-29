@@ -26,6 +26,14 @@ class SystemController extends AdminAbstractController
             'navbar_notice' => '',
         ]);
 
+        if (isset($config['system_module']) && !$this->auth_service->isSupperAdmin()) {
+            $user_id = $this->auth_service->get('id');
+            $modules = $this->permission_service->getModules($user_id);
+            $config['system_module'] = array_filter($config['system_module'], function ($item) use ($modules) {
+                return !in_array($item['name'], $modules);
+            });
+        }
+
         return $this->success($config);
     }
 

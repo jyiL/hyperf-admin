@@ -405,6 +405,8 @@ class MenuController extends AdminAbstractController
         $data['is_menu'] = $data['type'] == 2 ? 0 : $data['is_menu'];
         if ($data['permission']) {
             $data['permission'] = implode(',', $data['permission'] ?? []);
+        } else {
+            $data['permission'] = '';
         }
         $pid = array_pop($data['pid']);
         if ($pid == $id) {
@@ -418,16 +420,20 @@ class MenuController extends AdminAbstractController
             }
         }
         $data['status'] = YES;
+
+        $data['scaffold_action'] = json_encode($data['scaffold_action'], JSON_UNESCAPED_UNICODE);
     }
 
     protected function afterSave($pk_val, $data, $entity)
     {
         // 更新预置的脚手架权限
+        $entity = $entity->getModel();
         $scaffold_action = json_decode($entity->scaffold_action, true);
         $action_keys = $scaffold_action ? array_keys($scaffold_action) : [];
         $need_del_ids = $scaffold_action ? array_values($scaffold_action) : [];
         $router_ids = [];
         if (!empty($data['scaffold_action'])) {
+            $data['scaffold_action'] = json_decode($data['scaffold_action'], true);
             $need_del_ids = collect($scaffold_action)->except($data['scaffold_action'])->values()->toArray();
             $scaffold_action = collect($scaffold_action)->only($data['scaffold_action'])->toArray();
             $paths = array_filter(explode('/', $data['path']));
